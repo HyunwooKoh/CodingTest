@@ -1,0 +1,4 @@
+/*최대 가격을 갖는 물건의 모든 정보 출력하기*/
+SELECT *
+FROM FOOD_PRODUCT
+WHERE PRICE = (SELECT MAX(PRICE) FROM FOOD_PRODUCT);
