@@ -1,0 +1,9 @@
+-- 음식 종류 별로 즐겨찾기수가 가장 많은 식당 : sub 쿼리로 FOOD_TYPE, FAVORITES 라스트 찾기
+-- 음식 종류, ID, 식당 이름, 즐겨찾기수 출력
+-- 음식 종류를 기준으로 내림 차순 ORDER BY FOOD_TYPE DESC
+SELECT FOOD_TYPE, REST_ID, REST_NAME, FAVORITES
+FROM REST_INFO
+WHERE (FOOD_TYPE, FAVORITES) IN (SELECT FOOD_TYPE, MAX(FAVORITES) 
+                 FROM REST_INFO
+                 GROUP BY FOOD_TYPE)
+ORDER BY FOOD_TYPE DESC
