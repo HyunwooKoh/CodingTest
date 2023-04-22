@@ -1,0 +1,10 @@
+-- 코드를 입력하세요
+-- 루시와 엘라 찾기
+SELECT ANIMAL_ID, NAME, SEX_UPON_INTAKE
+FROM ANIMAL_INS
+WHERE NAME = 'Lucy'
+OR NAME = 'Ella'
+OR NAME = 'Pickle'
+OR NAME = 'Rogan'
+OR NAME = 'Sabrina'
+OR NAME = 'Mitty'
