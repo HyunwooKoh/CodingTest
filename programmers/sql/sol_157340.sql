@@ -1,0 +1,12 @@
+-- 코드를 입력하세요
+-- 2022년 10월 16일에 대여 중인 자동차 : 대여중
+-- 대여중이지 않으면 대여 가능 -> AVAILABILTY
+-- 반납 잘짜가 2022년 10월 16일이어도 대여중
+-- 출력 : 자동차 ID와 AVAILABILTY 출력
+SELECT CAR_ID,
+    MAX(CASE WHEN '20221016' 
+    BETWEEN DATE_FORMAT(START_DATE, '%Y%m%d') AND DATE_FORMAT(END_DATE, '%Y%m%d')
+    THEN '대여중' ELSE '대여 가능' END) AS AVAILABILITY
+FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY
+GROUP BY CAR_ID
+ORDER BY CAR_ID DESC
