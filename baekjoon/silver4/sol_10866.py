@@ -3,41 +3,40 @@ from collections import deque
 input = sys.stdin.readline
 
 if __name__ == "__main__":
-    d = deque()
+    queue = deque()
     n = int(input())
-    for _ in range(n):
-        command = input().split()
+
+    for i in range(n):
+        command = sys.stdin.readline().split()
 
         if command[0] == "push_front":
-            d.appendleft(command[1])
+            queue.appendleft(command[1])
         elif command[0] == "push_back":
-            d.append(command[1])
+            queue.append(command[1])
         elif command[0] == "pop_front":
-            if d:
-                print(d[0])    
-                d.popleft()
+            if queue:
+                print(queue.popleft())
             else:
                 print("-1")
         elif command[0] == "pop_back":
-            if d:
-                print(d[len(d) - 1])    
-                d.pop()
+            if queue:
+                print(queue.pop())
             else:
                 print("-1")
         elif command[0] == "size":
-            print(len(d))
+            print(len(queue))
         elif command[0] == "empty":
-            if d:
+            if queue:
                 print("0")
             else:
                 print("1")
         elif command[0] == "front":
-            if d:
-                print(d[0])
+            if queue:
+                print(queue[0])
             else:
                 print("-1")
         elif command[0] == "back":
-            if d:
-                print(d[len(d) - 1])
+            if queue:
+                print(queue[len(queue) - 1])
             else:
                 print("-1")
