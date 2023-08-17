@@ -13,30 +13,26 @@ def bfs(rx,ry,bx,by):
 
     success = False
     q.append((rx,ry,bx,by))
-    for i in range(10):
-        print("##################")
+    for i in range(1,11):
         if success:
             break
         for _ in range(len(q)):
-            rx, ry, bx, by = q.popleft()
-            if rx == ox and ry == oy:
-                res = i
-                print(res)
-                success = True
+            if success:
                 break
             
+            rx, ry, bx, by = q.popleft()
             for j in range(4):
+                redHole = False
                 nrx, nry = rx, ry
                 while True:
                     nrx += dx[j]
                     nry += dy[j]
-                    print("nrx : " + str(nrx) + ", nry : " + str(nry))
                     if mat[nry][nrx] == '#':
                         nrx -= dx[j]
                         nry -= dy[j]
                         break
                     elif nrx == ox and nry == oy:
-                        print("!!!!!!!!!!!!!! : " + str(i))
+                        redHole = True
                         break
                 
                 blueHole = False
@@ -44,7 +40,6 @@ def bfs(rx,ry,bx,by):
                 while True:
                     nbx += dx[j]
                     nby += dy[j]
-                    print("nbx : " + str(nbx) + ", nby : " + str(nby))
                     if mat[nby][nbx] == '#':
                         nbx -= dx[j]
                         nby -= dy[j]
@@ -53,7 +48,11 @@ def bfs(rx,ry,bx,by):
                         blueHole = True
                         break
 
-                if blueHole:
+                if redHole and not blueHole:
+                    success = True
+                    res = i
+                    break
+                elif blueHole:
                     continue
 
                 if nrx == nbx and nry == nby:
@@ -67,7 +66,7 @@ def bfs(rx,ry,bx,by):
                 if (nrx, nry, nbx, nby) not in visited:
                     q.append((nrx, nry, nbx, nby))
                     visited.append((nrx, nry, nbx, nby))
-    print(res)
+    return res
                 
 
 if __name__ == "__main__":
@@ -86,4 +85,4 @@ if __name__ == "__main__":
             elif line[j] == 'O':
                 ox, oy = j, i
         mat.append(line)
-    bfs(rx,ry,bx,by)
+    print(bfs(rx,ry,bx,by))
