@@ -2,58 +2,51 @@ import sys
 input = sys.stdin.readline
 
 # x, 동, 서, 북, 남
-dx = [0, 0,0,-1,0] 
-dy = [0, 1,-1,0,0]
-
-# bottom, left, front, back, right, top
-dice = [0,0,0,0,0,0]
-
+dx = [0, 0, 0, -1, 1]
+dy = [0, 1, -1, 0, 0]
+    
 if __name__ == "__main__":
-    n, m, x, y, k = map(int, input().split())
+    n, m, x, y, k = map(int,input().split())
+    dice = [0,0,0,0,0,0]
     mat = []
-    for _ in range(n):
-        mat.append(list(map(int, input().split())))
-    orders = list(map(int, input().split()))
 
-    for o in orders :
-        print(mat)
-        print(dice)
-        nx = x + dx[o]
-        ny = y + dy[o]
-        if 0<= nx < m and 0 <= ny < n:        
-            x , y = nx, ny
-            # move dice
-            if o == 3:
-                temp = dice[5]
-                dice[5] = dice[2]
-                dice[2] = dice[0]
-                dice[0] = dice[3]
-                dice[3] = temp
-            elif o == 4:
-                temp = dice[3]
-                dice[3] = dice[0]
-                dice[0] = dice[2]
-                dice[2] = dice[5]
-                dice[5] = temp
-            elif o == 1:
+    for i in range(n):
+        mat.append([int(x) for x in input().rstrip().split()])
+    command = [int(x) for x in input().rstrip().split()]
+
+    for i in command:
+        nx = x + dx[i]
+        ny = y + dy[i]
+        if 0 <= nx < n and 0 <= ny < m:
+            x, y = nx, ny
+            if i == 1:
                 temp = dice[1]
                 dice[1] = dice[0]
                 dice[0] = dice[4]
                 dice[4] = dice[5]
                 dice[5] = temp
-            elif o == 2:
+            elif i == 2:
                 temp = dice[4]
                 dice[4] = dice[0]
                 dice[0] = dice[1]
                 dice[1] = dice[5]
                 dice[5] = temp
+            elif i == 3:
+                temp = dice[5]
+                dice[5] = dice[2]
+                dice[2] = dice[0]
+                dice[0] = dice[3]
+                dice[3] = temp
+            elif i == 4:
+                temp = dice[3]
+                dice[3] = dice[0]
+                dice[0] = dice[2]
+                dice[2] = dice[5]
+                dice[5] = temp
 
-
-            # process logic
-            if mat[y][x] == 0:
-                mat[y][x] = dice[0]
+            if mat[x][y] == 0:
+                mat[x][y] = dice[0]
             else:
-                # copy mat[y][x] to bottom of dice
-                dice[0] = mat[y][x]
-                mat[y][x] = 0
-            print(dice[5]) # Top of Dice
+                dice[0] = mat[x][y]
+                mat[x][y] = 0
+            print(dice[5])
