@@ -27,20 +27,22 @@ def dijkstra(n, ban_p1, ban_p2):
 if __name__ == "__main__":
     n,m = map(int, input().split())
     graph = [[] for _ in range(n+1)]
-    preP = [0 for _ in range(n+1)]
+    preP = {i : 0 for i in range(1, n+1)}
     for _ in range(m):
         a,b,t = map(int, input().split())
         graph[a].append((b,t))
         graph[b].append((a,t))
         
-    delay = 0
     minRes = dijkstra(n,0,0)
+    
+    delay = 0
     point = n
-    for i in range(n, 0, -1):
-        res = dijkstra(n, preP[i], i)
+    while point != 1:
+        res = dijkstra(n, point, preP[point])
         if res == -1:
             delay = -1
             break
         else:
             delay = max(delay, res - minRes)
+        point = preP[point]
     print(delay)        
