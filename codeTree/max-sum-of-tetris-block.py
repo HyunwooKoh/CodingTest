@@ -1,3 +1,6 @@
+# 삼성 SW역량 테스트 기출문제 - 테트리스 블럭 안의 합 최대화하기
+# rf https://www.codetree.ai/training-field/frequent-problems/problems/max-sum-of-tetris-block/
+
 import sys
 input = sys.stdin.readline
 
@@ -21,8 +24,11 @@ def dfs(x, y, total, depth):
                 continue
             
             if not visited[ny][nx]:
-                if depth == 1:
-                    # ㅗ 모양 탐색
+                if depth == 2:
+                    # ㅗ자 블럭 탐색 -> 위치를 바꾸지 않으면 무조껀 ㅗ모양
+                    visited[ny][nx] = True
+                    dfs(x, y, total + mat[ny][nx], depth+1)
+                    visited[ny][nx] = False
 
                 visited[ny][nx] = True
                 dfs(nx, ny, total + mat[ny][nx], depth+1)
@@ -39,9 +45,10 @@ if __name__ == "__main__":
         line = list(map(int, input().split()))
         maxValue = max(maxValue, max(line))
         mat.append(line)
-
     for y in range(n):
         for x in range(m):
-            dfs(x,y,0,0)
+            visited[y][x] = True
+            dfs(x,y,mat[y][x],1)
+            visited[y][x] = False
     
     print(res)
