@@ -13,6 +13,7 @@ if __name__ == "__main__":
     direct = list(map(int, input().split()))
 
     for d in direct:
+        #print("pos : " + str(y) + ", " + str(x)) 
         nx = x + dx[d]
         ny = y + dy[d]
 
@@ -49,9 +50,13 @@ if __name__ == "__main__":
             sqare[5] = sqare[1]
             sqare[1] = temp
 
-        if mat[ny][nx] == 0:
-            mat[ny][nx] = sqare[5] # 정육면체의 밑면
+        if mat[nx][ny] == 0:
+            mat[nx][ny] = sqare[5] # 정육면체의 밑면
         else:
-            sqare[5] = mat[ny][nx]
+            sqare[5] = mat[nx][ny]
+            mat[nx]n[y] = 0
+        
+        x = nx
+        y = ny
         
         print(sqare[0])
