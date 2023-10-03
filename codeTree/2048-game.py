@@ -14,20 +14,87 @@ def move(dir, tempMat):
         # 아래로 밀기
         # 아래방향의 끝(맨위)를 기준으로 Top-Down 탐색
         for i in range(n):
-            last = tempMat[0][i]
-            for j in range(1, n):
-                if last == 0:
-                    last = tempMat[j][i]
-        return
+            j = n-1
+            while j > 0:
+                nextNum = -1
+                for k in range(j-1, -1, -1):
+                    if tempMat[i][k] != 0:
+                        nextNum = k
+                        break
+                if nextNum != -1:
+                    if tempMat[i][j] == 0:
+                        tempMat[i][j] = tempMat[i][nextNum]
+                        tempMat[i][nextNum] = 0
+                    else:
+                        if tempMat[i][j] == tempMat[i][nextNum]:
+                            tempMat[i][j] *= 2
+                            tempMat[i][nextNum] = 0
+                        j -= 1
+                else:
+                    break
     elif dir == 1:
         # 위로 밀기
-        return
+        for i in range(n):
+            j = 0
+            while j < n:
+                nextNum = -1
+                for k in range(j+1, n):
+                    if tempMat[i][k] != 0:
+                        nextNum = k
+                        break
+                if nextNum != -1:
+                    if tempMat[i][j] == 0:
+                        tempMat[i][j] = tempMat[i][nextNum]
+                        tempMat[i][nextNum] = 0
+                    else:
+                        if tempMat[i][j] == tempMat[i][nextNum]:
+                            tempMat[i][j] *= 2
+                            tempMat[i][nextNum] = 0
+                        j += 1
+                else:
+                    break
     elif dir == 2:
         # 오른쪽으로 밀기
-        return
+        for i in range(n):
+            j = n-1
+            while j > 0:
+                nextNum = -1
+                for k in range(j-1, -1, -1):
+                    if tempMat[k][i] != 0:
+                        nextNum = k
+                        break
+                if nextNum != -1:
+                    if tempMat[j][i] == 0:
+                        tempMat[j][i] = tempMat[nextNum][i]
+                        tempMat[nextNum][i] = 0
+                    else:
+                        if tempMat[j][i] == tempMat[nextNum][i]:
+                            tempMat[j][i] *= 2
+                            tempMat[nextNum][i] = 0
+                        j -= 1
+                else:
+                    break
     elif dir == 3:
         # 왼쪽으로 밀기
-        return
+        for i in range(n):
+            j = 0
+            while j < n:
+                nextNum = -1
+                for k in range(j+1, n):
+                    if tempMat[k][i] != 0:
+                        nextNum = k
+                        break
+                if nextNum != -1:
+                    if tempMat[j][i] == 0:
+                        tempMat[j][i] = tempMat[nextNum][i]
+                        tempMat[nextNum][i] = 0
+                    else:
+                        if tempMat[j][i] == tempMat[nextNum][i]:
+                            tempMat[j][i] *= 2
+                            tempMat[nextNum][i] = 0
+                        j += 1
+                else:
+                    break
 
 def dfs(cnt, tempMat):
     if cnt == 5:
