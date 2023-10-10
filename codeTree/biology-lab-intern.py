@@ -23,7 +23,7 @@ if __name__ == "__main__":
                 res += molds[(x,y)][2]
                 del molds[(x,y)]
                 break
-        
+
         if x != m-1:
             tmpDict = {}
             for (x,y) in molds.keys():
@@ -31,22 +31,20 @@ if __name__ == "__main__":
                 nx = x + dx[mold[1]]*mold[0]
                 ny = y + dy[mold[1]]*mold[0]
 
-                if nx < 0: # 왼쪽 벽을 벗어난 경우
-                    nx = abs(nx)
-                    if nx == m:
-                        nx -= 1
-                    mold[1] = 2
-                elif nx >= m: # 오른쪽 벽을 벗어난 경우
-                    nx = (m-1) - (nx - (m-1))
-                    mold[1] = 3
-                elif ny < 0: # 위쪽 벽을 벗어난 경우
-                    ny = abs(ny)
-                    if ny == n:
-                        ny -= 1
-                    mold[1] = 1
-                elif ny >= n: # 아래쪽 벽을 벗어난 경우
-                    ny = (n-1) - (ny - (n-1))
-                    mold[1] = 0
+                while nx < 0 or nx >= m or ny < 0 or ny >= n:
+                    if nx < 0: # 왼쪽 벽을 벗어난 경우
+                        nx = abs(nx)
+                        mold[1] = 2
+                    elif nx >= m: # 오른쪽 벽을 벗어난 경우
+                        nx = (m-1) - (nx - (m-1))
+                        mold[1] = 3
+                    elif ny < 0: # 위쪽 벽을 벗어난 경우
+                        ny = abs(ny)
+                        mold[1] = 1
+                    elif ny >= n: # 아래쪽 벽을 벗어난 경우
+                        ny = (n-1) - (ny - (n-1))
+                        mold[1] = 0
+                
                 # 한 칸에 두마리 이상인 경우, 큰 곰팡이만 생존
                 if not (nx,ny) in tmpDict or mold[2] > tmpDict[(nx,ny)][2]:
                     tmpDict[(nx,ny)] = mold
