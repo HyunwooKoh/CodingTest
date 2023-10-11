@@ -33,18 +33,24 @@ if __name__ == "__main__":
     for _ in range(m):
         y, x = map(int, input().split())
         people.append((x-1, y-1))
-    exitX, exitY = map(int, input().split())
+    ex, ey = map(int, input().split())
+    ex, ey = ex-1, ey-1
     time, move = 0, 0
 
-    while time < k:
+    while time < k and people:
+        print()
+        print("people : " + str(people))
+        print("exit : (" + str(ex) + "," + str(ey) +")")
+        for i in mat:
+            print(i)
         
         # 이동
         i = 0
         while i < len(people):
             minDist = int(1e9) + 1
             px, py = people[i]
-            dist = abs(px - exitX) + abs(py - exitY)
-            minPos = []
+            dist = abs(px - ex) + abs(py - ey)
+            minPos = ()
             
             for d in range(4):
                 nx = px + dx[d]
@@ -53,7 +59,10 @@ if __name__ == "__main__":
                 if nx < 0 or ny < 0 or nx >= n or ny >= n:
                     continue
                 
-                nDist = abs(nx - exitX) + abs(ny - exitY)
+                if mat[ny][nx] != 0:
+                    continue
+
+                nDist = abs(nx - ex) + abs(ny - ey)
                 # 최단거리가 감소하는 곳으로만 이동
                 if  dist <= nDist:
                     continue
@@ -61,31 +70,69 @@ if __name__ == "__main__":
                 # 상/하가 우선되므로, 같은 값은 무시
                 if nDist < minDist:
                     minDist = nDist
-                    minPos = [nx,ny]
+                    minPos = (nx,ny)
             
             if not minPos: # 움직일 수 없는 경우
+                i += 1
                 continue
             else:
                 move += 1
-                if minPos[0] == exitX and minPos[1] == exitY:
+                if minPos[0] == ex and minPos[1] == ey:
                     # 출구로 나가는 경우 해당 탐험가 제거
                     people.pop(i)
                 else:
+                    people[i] = minPos
                     i += 1
-                    people[i] = (nx, ny)
-    
+
+        if not people:
+            print("not!")
+            break
+        print("people : " + str(people))
+        
         # 정사각형 집기
         # 크기가 같을 경우를 대비해서, (1)y좌표 (2)x좌표로 정렬
         people.sort(key = lambda x : (x[1], x[0]))
         minLen = n
-        squares = [] # tx, ty, bx, by
+        tlx, tly = n, n
         for px, py in people:
-            pLen = max(abs(px - exitX), abs(py - exitY))
+            pLen = max(abs(px - ex), abs(py - ey))
 
             if pLen < minLen:
-                squares = [min(px, exitX), min(py, exitY), min(px, exitX)+pLen, min(py, exitY)+pLen]
+                minLen = pLen
+                if px == ex: # 같은 열인 경우
+                    tlx = px - pLen if px >= pLen else px
+                    tly = min(py, ey)
+                elif py == ey: # 같은 행인 경우
+                    tlx = min(px, ex)
+                    tly = py - pLen if py >= pLen else py
+                else: 
+                    tlx = min(px, ex)
+                    tly = min(py, ey)
         
         # 정사각형 돌리기
+        # 이 떄, 사람 및 출구의 좌표도 바뀌어야 함.
+        targetMat = []
+        for y in range(tly, tly + minLen + 1):
+            targetMat.append(mat[y][tlx : tlx + minLen + 1].copy())
         
+        for y in range(minLen+1):
+            for x in range(minLen+1):
+                orgx, orgy = tlx + x, tly + y
+                nx, ny = tlx + minLen - y, tly + x
+                print("orgx : " + str(orgx) + ", orgy : " + str(orgy))
+                print("nx : " + str(nx) + ", ny : " + str(ny))
+                if targetMat[y][x] != 0:
+                    targetMat[y][x] -= 1
+                elif orgx == ex and orgy == ey:
+                    ex, ey = nx, ny
+                elif (orgx,orgy) in people:
+                    people.remove((orgx,orgy))
+                    people.append((nx, ny))
+                mat[ny][nx] = targetMat[y][x]
+
+        time += 1
+
+    print(move)
+    print(str(ex) + " " + str(ey))
 
         
