@@ -1,138 +1,107 @@
 # ref https://www.codetree.ai/training-field/frequent-problems/problems/maze-runner
 import sys
-from collections import deque
+
 input = sys.stdin.readline
+dx = [0, 0, -1, 1]
+dy = [-1, 1, 0, 0]
 
-# M명의 참가자
-# N*N 격자
-# K초 동안 수행 (모두 탈출 시 종료)
-# y : r, x : c -> (r-1, c-1)
+def findSqure():
+    for size in range(2, n + 1):
+        for y1 in range(n - size + 1):
+            for x1 in range(n - size + 1):
+                x2, y2 = x1 + size - 1, y1 + size - 1
 
-### 미로 종류
-# 미로 칸 종류
-# : 빈칸, : 벽 (이동 X, 1~9 값, 회전시 -= 1, 0되면 빈칸)
-# 출구 도착시 종료
+                # 만약 출구가 해당 정사각형 안에 없다면 스킵
+                if not (x1 <= ex <= x2 and y1 <= ey <= y2):
+                    continue
 
-### 미로 회전
-# 한명 이상의 참가자 및 출구를 포함한 가장 작은 정사각형 
-# -> 1초마다 최단거리가 바뀜 (갱신?)
-# -> 사람의 좌표를 리스트로 관리하고, 이 리스트 순회로 정사각형 특정
-# 여러개 -> 좌상단의 y좌표가 작은 것이 우선, 이것이 같으면 x 좌표가 작은 것이 우선
-# 시계방향 90도 회전 및 내구도가 1씩 깍임
+                # 한 명 이상의 참가자가 해당 정사각형 안에 있다면 확정
+                for rx, ry in runner:
+                    if x1 <= rx <= x2 and y1 <= ry <= y2:
+                        return size, x1, y1
 
-### 출력
-# 모든 참가자들의 이동 거리 합 및 출구 좌표
-
-dx = [0,0,-1,1]
-dy = [-1,1,0,0]
 
 if __name__ == "__main__":
     n, m, k = map(int, input().split())
     mat = [list(map(int, input().split())) for _ in range(n)]
-    people = []
+    runner = []
     for _ in range(m):
         y, x = map(int, input().split())
-        people.append((x-1, y-1))
+        runner.append((x - 1, y - 1))
     ex, ey = map(int, input().split())
-    ex, ey = ex-1, ey-1
+    ex, ey = ex - 1, ey - 1
     time, move = 0, 0
 
-    while time < k and people:
-        print()
-        print("people : " + str(people))
-        print("exit : (" + str(ex) + "," + str(ey) +")")
-        for i in mat:
-            print(i)
-        
+    while time < k and runner:
         # 이동
-        i = 0
-        while i < len(people):
-            minDist = int(1e9) + 1
-            px, py = people[i]
+        changedrunner = []
+        for px, py in runner:
             dist = abs(px - ex) + abs(py - ey)
+            minDist = dist
             minPos = ()
-            
-            for d in range(4):
-                nx = px + dx[d]
-                ny = py + dy[d]
+
+            for i in range(4):
+                nx = px + dx[i]
+                ny = py + dy[i]
 
                 if nx < 0 or ny < 0 or nx >= n or ny >= n:
                     continue
-                
+
                 if mat[ny][nx] != 0:
                     continue
 
                 nDist = abs(nx - ex) + abs(ny - ey)
                 # 최단거리가 감소하는 곳으로만 이동
-                if  dist <= nDist:
+                if dist <= nDist:
                     continue
-
-                # 상/하가 우선되므로, 같은 값은 무시
+                # 상/하가 우선되므로, 찾는 즉시 종료
                 if nDist < minDist:
                     minDist = nDist
-                    minPos = (nx,ny)
-            
-            if not minPos: # 움직일 수 없는 경우
-                i += 1
-                continue
+                    minPos = (nx, ny)
+                    break
+
+            if minDist == dist:  # 움직일 수 없는 경우
+                changedrunner.append((px,py))
             else:
                 move += 1
                 if minPos[0] == ex and minPos[1] == ey:
                     # 출구로 나가는 경우 해당 탐험가 제거
-                    people.pop(i)
+                    continue
                 else:
-                    people[i] = minPos
-                    i += 1
+                    changedrunner.append(minPos)
 
-        if not people:
-            print("not!")
+        del runner
+        runner = changedrunner.copy()
+        if not runner:
             break
-        print("people : " + str(people))
-        
-        # 정사각형 집기
-        # 크기가 같을 경우를 대비해서, (1)y좌표 (2)x좌표로 정렬
-        people.sort(key = lambda x : (x[1], x[0]))
-        minLen = n
-        tlx, tly = n, n
-        for px, py in people:
-            pLen = max(abs(px - ex), abs(py - ey))
 
-            if pLen < minLen:
-                minLen = pLen
-                if px == ex: # 같은 열인 경우
-                    tlx = px - pLen if px >= pLen else px
-                    tly = min(py, ey)
-                elif py == ey: # 같은 행인 경우
-                    tlx = min(px, ex)
-                    tly = py - pLen if py >= pLen else py
-                else: 
-                    tlx = min(px, ex)
-                    tly = min(py, ey)
-        
         # 정사각형 돌리기
         # 이 떄, 사람 및 출구의 좌표도 바뀌어야 함.
+        length, tlx, tly = findSqure()
         targetMat = []
-        for y in range(tly, tly + minLen + 1):
-            targetMat.append(mat[y][tlx : tlx + minLen + 1].copy())
-        
-        for y in range(minLen+1):
-            for x in range(minLen+1):
-                orgx, orgy = tlx + x, tly + y
-                nx, ny = tlx + minLen - y, tly + x
-                print("orgx : " + str(orgx) + ", orgy : " + str(orgy))
-                print("nx : " + str(nx) + ", ny : " + str(ny))
-                if targetMat[y][x] != 0:
-                    targetMat[y][x] -= 1
-                elif orgx == ex and orgy == ey:
-                    ex, ey = nx, ny
-                elif (orgx,orgy) in people:
-                    people.remove((orgx,orgy))
-                    people.append((nx, ny))
-                mat[ny][nx] = targetMat[y][x]
+        for y in range(tly, tly + length):
+            targetMat.append(mat[y][tlx: tlx + length].copy())
 
+        changedrunner = []
+        newEx, newEy = -1, -1
+        for y in range(length):
+            for x in range(length):
+                orgx, orgy = tlx + x, tly + y
+                nx, ny = tlx + (length - 1) - y, tly + x
+
+                mat[ny][nx] = targetMat[y][x]
+                if targetMat[y][x] > 0:
+                    mat[ny][nx] -= 1
+
+                if orgx == ex and orgy == ey:
+                    newEx, newEy = nx, ny
+                elif (orgx, orgy) in runner:
+                    runner.remove((orgx, orgy))
+                    changedrunner.append((nx, ny))
+
+        runner += changedrunner.copy()
+        ex, ey = newEx, newEy
         time += 1
 
     print(move)
-    print(str(ex) + " " + str(ey))
-
-        
+    print(str(ex + 1) + " " + str(ey + 1))
